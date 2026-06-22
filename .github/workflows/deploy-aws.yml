@@ -1,14 +1,42 @@
-cd ~/egfr-stage-prediction-api
+name: Deploy to AWS EC2
 
-git pull
+on:
+  push:
+    branches:
+      - main
 
-docker stop egfr-api || true
+jobs:
 
-docker rm egfr-api || true
+  deploy-aws:
 
-docker build -t egfr-api .
+    runs-on: ubuntu-latest
 
-docker run -d \
-  --name egfr-api \
-  -p 8000:8000 \
-  egfr-api
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Deploy to AWS EC2
+        uses: appleboy/ssh-action@v1.0.3
+
+        with:
+          host: ${{ secrets.AWS_SERVER_HOST }}
+          username: ${{ secrets.AWS_SERVER_USER }}
+          key: ${{ secrets.AWS_SSH_PRIVATE_KEY }}
+
+          script: |
+
+            cd ~/egfr-stage-prediction-api
+
+            git pull
+
+            docker stop egfr-api || true
+
+            docker rm egfr-api || true
+
+            docker build -t egfr-api .
+
+            docker run -d \
+              --name egfr-api \
+              -p 8000:8000 \
+              egfr-api
