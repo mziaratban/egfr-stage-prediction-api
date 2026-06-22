@@ -1,0 +1,14 @@
+cd ~/egfr-stage-prediction-api
+
+git pull
+
+docker stop egfr-api || true
+
+docker rm egfr-api || true
+
+docker build -t egfr-api .
+
+docker run -d \
+  --name egfr-api \
+  -p 8000:8000 \
+  egfr-api
