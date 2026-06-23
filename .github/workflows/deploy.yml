@@ -50,7 +50,7 @@ jobs:
           ghcr.io/mziaratban/egfr-stage-prediction-api-streamlit:latest
 
       - name: Deploy to Ubuntu
-        uses: appleboy/ssh-action@v1
+        uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SERVER_IP }}
           username: ${{ secrets.SERVER_USER }}
