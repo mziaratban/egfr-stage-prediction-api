@@ -1,4 +1,4 @@
-name: Build and Deploy
+name: Deploy
 
 on:
   push:
@@ -6,7 +6,9 @@ on:
       - main
 
 jobs:
+
   deploy:
+
     runs-on: ubuntu-latest
 
     permissions:
@@ -15,7 +17,8 @@ jobs:
 
     steps:
 
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Login to GHCR
         uses: docker/login-action@v3
@@ -24,16 +27,30 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build image
+      - name: Build FastAPI
         run: |
-          docker build -t ghcr.io/${{ github.repository }}:latest .
+          docker build \
+          -f Dockerfile.fastapi \
+          -t ghcr.io/mziaratban/egfr-stage-prediction-api-fastapi:latest .
 
-      - name: Push image
+      - name: Push FastAPI
         run: |
-          docker push ghcr.io/${{ github.repository }}:latest
+          docker push \
+          ghcr.io/mziaratban/egfr-stage-prediction-api-fastapi:latest
 
-      - name: Deploy on server
-        uses: appleboy/ssh-action@v1.0.3
+      - name: Build Streamlit
+        run: |
+          docker build \
+          -f Dockerfile.streamlit \
+          -t ghcr.io/mziaratban/egfr-stage-prediction-api-streamlit:latest .
+
+      - name: Push Streamlit
+        run: |
+          docker push \
+          ghcr.io/mziaratban/egfr-stage-prediction-api-streamlit:latest
+
+      - name: Deploy to Ubuntu
+        uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.SERVER_IP }}
           username: ${{ secrets.SERVER_USER }}
