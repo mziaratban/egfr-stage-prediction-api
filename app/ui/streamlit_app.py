@@ -48,7 +48,7 @@ sorted_drugs = [d for d, _ in paired]
 with st.sidebar:
     st.header("📋 Patient Demographics")
 
-    age = st.number_input("Age", 1, 120, 60)
+    age = st.number_input("Age", 1, 120, 60, step=10)
     gender = st.radio("Gender", ["Male", "Female"])
 
     st.markdown("---")
