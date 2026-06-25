@@ -64,9 +64,9 @@ def predict(data: InputData):
     x = np.array(data.features, dtype=float).reshape(1, -1)
 
     preds = [
-        4-int(model_1.predict(x)[0]),
-        4-int(model_2.predict(x)[0]),
-        4-int(model_3.predict(x)[0]),
+        14-int(model_1.predict(x)[0]),
+        14-int(model_2.predict(x)[0]),
+        14-int(model_3.predict(x)[0]),
         4-int(model_4.predict(x)[0]),
         4-int(model_5.predict(x)[0]),
         4-int(model_6.predict(x)[0]),
