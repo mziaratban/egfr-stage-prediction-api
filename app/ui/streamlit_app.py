@@ -48,14 +48,14 @@ sorted_drugs = [d for d, _ in paired]
 with st.sidebar:
     st.header("📋 Patient Demographics")
 
-    age = st.number_input("Age", 1, 120, 60, step=10)
+    age = st.number_input("Age (years)", 1, 120, 60, step=10)
     gender = st.radio("Gender", ["Male", "Female"])
 
     st.markdown("---")
     st.header("📋 Lab Items")
 
-    scr = st.number_input("Serum Creatinine (SCr)", 0.0, 25.0, 3.0, step=0.05)
-    urea = st.number_input("Urea", 0.0, 400.0, 50.0, step=5.0)
+    scr = st.number_input("Serum Creatinine (mg/dL)", 0.0, 25.0, 3.0, step=0.05)
+    urea = st.number_input("Urea (mg/dL)", 0.0, 400.0, 50.0, step=5.0)
 
     st.markdown("---")
     submit_button = st.button("Run Prediction Model", type="primary", use_container_width=True)
