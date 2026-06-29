@@ -2,6 +2,9 @@ import streamlit as st
 import requests
 import numpy as np
 import pandas as pd
+import matplotlib
+import matplotlib.colors as mcolors
+import matplotlib.pyplot as plt
 
 # -------------------------
 # Page config
@@ -149,13 +152,82 @@ if submit_button:
             st.write("### Forecasting Results")
             st.write("Predicted eGFR stages over next 7 days:")
 
+
             df = pd.DataFrame(
-                [preds],
-                columns=[f"Day {i}" for i in range(1, 8)],
-                index=["Stage"]
+                [preds], columns=[f"Day {i}" for i in range(1, 8)], index=["Stage"]
             )
 
-            st.table(df)
+            # --- 2. Create your custom 5-step color gradient ---
+            custom_hex_colors = [
+                "#2ca02c",  # 1: Green (Normal)
+                "#a1d99b",  # 2: Light Green
+                "#fcfd00",  # 3: Yellow
+                "#ff7f0e",  # 4: Orange
+                "#d62728",  # 5: Red (Abnormal)
+            ]
 
+            # Build a smooth linear colormap out of your custom sequence
+            cmap = mcolors.LinearSegmentedColormap.from_list(
+                "severity_cmap", custom_hex_colors
+            )
+
+            # --- 3. Apply the Style ---
+            styled_df = (
+                df.style.background_gradient(cmap=cmap, vmin=1, vmax=5)
+                # Center align text inside the data cells
+                .set_properties(
+                    **{
+                        "text-align": "center",
+                        "padding": "9px",
+                    }
+                ).set_table_styles(
+                    [
+                        # Force the main table container to expand 100% horizontally
+                        {
+                            "selector": "",  # Empty selector targets the root <table> element
+                            "props": [
+                                ("width", "100% !important"),
+                                ("table-layout", "fixed !important"),
+                            ],
+                        },
+                        # Center align and format the header cells (th)
+                        {
+                            "selector": "th",
+                            "props": [
+                                ("text-align", "center !important"),
+                                (
+                                    "background-color",
+                                    "#f0f2f6 !important",
+                                ),  # Gray background
+                                ("color", "#31333F !important"),
+                                ("font-weight", "bold !important"),
+                                ("padding", "10px !important"),
+                            ],
+                        },
+                    ]
+                )
+                .format("{:.1f}")
+            )
+
+            # --- 4. Render via Pure HTML ---
+            html_table = styled_df.to_html()
+            # Wrap the table in a div that clips the sharp corners and adds a clean border
+            rounded_html_wrapper = f"""
+            <div style="
+                border: 1px solid #e0e2e6; 
+                border-radius: 8px; 
+                overflow: hidden; 
+                width: 100%;
+            ">
+                {html_table}
+            </div>
+            """
+
+            # Inject the rounded table structure directly into Streamlit
+            st.html(rounded_html_wrapper)            
+            
+            
+            
+            
     except requests.exceptions.RequestException as e:
         st.error(f"API connection failed: {str(e)}")
