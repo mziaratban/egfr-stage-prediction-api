@@ -78,8 +78,8 @@ with st.sidebar:
     # Conversion calculation (mg/dL to umol/L)
     scr_umol = scr * 88.4
     # st.caption(f"💡 Converted: **{scr_umol:.1f}** μmol/L")
-    st.caption(f"   {scr_umol:.1f} μmol/L")
-    st.write(f"   {scr_umol:.1f} μmol/L")
+    st.caption(f" ➜ {scr_umol:.1f} μmol/L")
+    #st.write(f"   {scr_umol:.1f} μmol/L")
 
     st.write("")  # Adds a tiny bit of spacing
 
@@ -90,8 +90,8 @@ with st.sidebar:
     # Note: Using the standard full Blood Urea conversion factor (0.166).
     # If your input is actually BUN (Blood Urea Nitrogen), change 0.166 to 0.357.
     urea_mmol = urea * 0.166
-    st.caption(f"   {urea_mmol:.1f} mmol/L")
-    st.info(f"   {urea_mmol:.1f} mmol/L")
+    st.caption(f" ➜ {urea_mmol:.1f} mmol/L")
+    #st.info(f"   {urea_mmol:.1f} mmol/L")
 
     st.markdown("---")
     submit_button = st.button(
