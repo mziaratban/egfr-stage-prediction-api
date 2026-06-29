@@ -197,7 +197,7 @@ if submit_button:
                                 ("text-align", "center !important"),
                                 (
                                     "background-color",
-                                    "#f0f2f6 !important",
+                                    "#f2f4f8 !important",
                                 ),  # Gray background
                                 ("color", "#31333F !important"),
                                 ("font-weight", "bold !important"),
