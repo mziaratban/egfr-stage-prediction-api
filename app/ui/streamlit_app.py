@@ -45,6 +45,22 @@ sorted_drugs = [d for d, _ in paired]
 # -------------------------
 # Sidebar inputs
 # -------------------------
+# with st.sidebar:
+#     st.header("📋 Patient Demographics")
+
+#     age = st.number_input("Age (years)", 1, 120, 60, step=10)
+#     gender = st.radio("Gender", ["Male", "Female"])
+
+#     st.markdown("---")
+#     st.header("📋 Lab Items")
+
+#     scr = st.number_input("Serum Creatinine (mg/dL)", 0.0, 25.0, 3.0, step=0.05)
+#     urea = st.number_input("Urea (mg/dL)", 0.0, 400.0, 50.0, step=5.0)
+
+#     st.markdown("---")
+#     submit_button = st.button("Run Prediction Model", type="primary", use_container_width=True)
+
+
 with st.sidebar:
     st.header("📋 Patient Demographics")
 
@@ -54,12 +70,32 @@ with st.sidebar:
     st.markdown("---")
     st.header("📋 Lab Items")
 
-    scr = st.number_input("Serum Creatinine (mg/dL)", 0.0, 25.0, 3.0, step=0.05)
+    # 1. Serum Creatinine Input & Conversion
+    scr = st.number_input(
+        "Serum Creatinine (mg/dL)", 0.0, 25.0, 3.0, step=0.05
+    )
+
+    # Conversion calculation (mg/dL to umol/L)
+    scr_umol = scr * 88.4
+    # st.caption(f"💡 Converted: **{scr_umol:.1f}** μmol/L")
+    st.caption(f"{scr_umol:.1f} μmol/L")
+
+    st.write("")  # Adds a tiny bit of spacing
+
+    # 2. Urea Input & Conversion
     urea = st.number_input("Urea (mg/dL)", 0.0, 400.0, 50.0, step=5.0)
 
-    st.markdown("---")
-    submit_button = st.button("Run Prediction Model", type="primary", use_container_width=True)
+    # Conversion calculation (mg/dL to mmol/L)
+    # Note: Using the standard full Blood Urea conversion factor (0.166).
+    # If your input is actually BUN (Blood Urea Nitrogen), change 0.166 to 0.357.
+    urea_mmol = urea * 0.166
+    st.caption(f"{urea_mmol:.1f} mmol/L")
 
+    st.markdown("---")
+    submit_button = st.button(
+        "Run Prediction Model", type="primary", use_container_width=True
+    )
+    
 # -------------------------
 # Drug selection grid
 # -------------------------
