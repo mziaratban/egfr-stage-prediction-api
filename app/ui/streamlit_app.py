@@ -12,7 +12,9 @@ import matplotlib.pyplot as plt
 st.set_page_config(page_title="eGFR Predictor", layout="wide")
 
 st.title("eGFR Prediction Dashboard")
-st.markdown("---")
+#st.markdown("---")
+#st.divider()
+st.markdown( '<div style="border-top: 1px solid #e6e9ef; margin: 1px 0;"></div>',   unsafe_allow_html=True)
 
 # -------------------------
 # Drug mapping
@@ -70,7 +72,10 @@ with st.sidebar:
     age = st.number_input("Age (years)", 1, 120, 60, step=10)
     gender = st.radio("Gender", ["Male", "Female"])
 
-    st.markdown("---")
+    #st.markdown("---")
+    #st.divider()
+    st.markdown( '<div style="border-top: 1px solid #c6c9cf; margin: 1px 0;"></div>',   unsafe_allow_html=True)
+    
     st.header("📋 Lab Items")
 
     # 1. Serum Creatinine Input & Conversion
@@ -97,6 +102,9 @@ with st.sidebar:
     #st.info(f"   {urea_mmol:.1f} mmol/L")
 
     st.markdown("---")
+    # st.divider()
+    #st.markdown( '<div style="border-top: 1px solid #b6b9bf; margin: 10px 0;"></div>',   unsafe_allow_html=True)
+    
     submit_button = st.button(
         "Run Prediction Model", type="primary", use_container_width=True
     )
@@ -148,6 +156,8 @@ if submit_button:
         else:
             api_data = response.json()
             preds = np.array(api_data["predictions"])
+            
+            st.markdown( '<div style="border-top: 1px solid #e6e9ef; margin: 1px 0;"></div>',   unsafe_allow_html=True)
 
             st.write("### Forecasting Results")
             st.write("Predicted eGFR stages over next 7 days:")
@@ -171,6 +181,15 @@ if submit_button:
                 "severity_cmap", custom_hex_colors
             )
 
+            
+            stage_labels = {
+                1: "Normal",
+                2: "Mild",
+                3: "Moderate",
+                4: "Severe",
+                5: "Failure",
+            }            
+            
             # --- 3. Apply the Style ---
             styled_df = (
                 df.style.background_gradient(cmap=cmap, vmin=1, vmax=5)
@@ -178,7 +197,8 @@ if submit_button:
                 .set_properties(
                     **{
                         "text-align": "center",
-                        "padding": "9px",
+                        "padding": "5px",
+                        "font-size": "16px !important"
                     }
                 ).set_table_styles(
                     [
@@ -201,12 +221,14 @@ if submit_button:
                                 ),  # Gray background
                                 ("color", "#31333F !important"),
                                 ("font-weight", "bold !important"),
-                                ("padding", "10px !important"),
+                                ("padding", "5px !important"),
+                                ("font-size", "14px !important")
                             ],
                         },
                     ]
                 )
-                .format("{:.1f}")
+                # Substitute numeric values with "Number: Label" text dynamically
+                .format(lambda val: f"{int(val)}: {stage_labels.get(int(val), '')}")
             )
 
             # --- 4. Render via Pure HTML ---
