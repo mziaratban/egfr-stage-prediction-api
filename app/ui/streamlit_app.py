@@ -5,13 +5,30 @@ import pandas as pd
 import matplotlib
 import matplotlib.colors as mcolors
 import matplotlib.pyplot as plt
+from pathlib import Path
 
 # -------------------------
 # Page config
 # -------------------------
 st.set_page_config(page_title="eGFR Predictor", layout="wide")
 
-st.title("eGFR Prediction Dashboard")
+# Get the directory of the current script (ui/)
+SCRIPT_DIR = Path(__file__).parent
+LOGO_PATH = SCRIPT_DIR / "graphML_logo.png"
+
+# Create two columns: a large one for the title and a small one for the logo
+col1, col2 = st.columns([9.3, 0.7])
+
+with col1:
+    st.title("eGFR Prediction Dashboard")
+
+with col2:
+    # Check if the file exists to avoid crashes, then display it
+    if LOGO_PATH.exists():
+        st.image(str(LOGO_PATH), use_container_width=True)
+    else:
+        st.error(f"Logo not found at {LOGO_PATH}")
+        
 #st.markdown("---")
 #st.divider()
 st.markdown( '<div style="border-top: 1px solid #e6e9ef; margin: 1px 0;"></div>',   unsafe_allow_html=True)
@@ -47,26 +64,16 @@ paired = sorted(zip(raw_drugs, indices), key=lambda x: x[0])
 drug_mapping = dict(paired)
 sorted_drugs = [d for d, _ in paired]
 
-# -------------------------
-# Sidebar inputs
-# -------------------------
-# with st.sidebar:
-#     st.header("📋 Patient Demographics")
 
-#     age = st.number_input("Age (years)", 1, 120, 60, step=10)
-#     gender = st.radio("Gender", ["Male", "Female"])
 
-#     st.markdown("---")
-#     st.header("📋 Lab Items")
 
-#     scr = st.number_input("Serum Creatinine (mg/dL)", 0.0, 25.0, 3.0, step=0.05)
-#     urea = st.number_input("Urea (mg/dL)", 0.0, 400.0, 50.0, step=5.0)
-
-#     st.markdown("---")
-#     submit_button = st.button("Run Prediction Model", type="primary", use_container_width=True)
 
 
 with st.sidebar:
+    # col1, col2 , col3 = st.columns([1,2,1])
+    # with col2:
+    #     st.image(str(LOGO_PATH), use_container_width=True)
+        
     st.header("📋 Patient Demographics")
 
     age = st.number_input("Age (years)", 1, 120, 60, step=10)
@@ -106,7 +113,7 @@ with st.sidebar:
     #st.markdown( '<div style="border-top: 1px solid #b6b9bf; margin: 10px 0;"></div>',   unsafe_allow_html=True)
     
     submit_button = st.button(
-        "Run Prediction Model", type="primary", use_container_width=True
+        "Predict eGFR Stage", type="primary", use_container_width=True
     )
     
 # -------------------------
