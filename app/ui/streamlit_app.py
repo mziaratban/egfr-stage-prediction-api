@@ -17,7 +17,7 @@ SCRIPT_DIR = Path(__file__).parent
 LOGO_PATH = SCRIPT_DIR / "graphML_logo.png"
 
 # Create two columns: a large one for the title and a small one for the logo
-col1, col2 = st.columns([9.3, 0.7])
+col1, col2 = st.columns([9.4, 0.6])
 
 with col1:
     st.title("eGFR Prediction Dashboard")
