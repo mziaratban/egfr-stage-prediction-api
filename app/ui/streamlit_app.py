@@ -29,7 +29,7 @@ with col2:
     else:
         st.error(f"Logo not found at {LOGO_PATH}")
         
-#st.markdown("---")
+#st.markdown("---")    
 #st.divider()
 st.markdown( '<div style="border-top: 1px solid #e6e9ef; margin: 1px 0;"></div>',   unsafe_allow_html=True)
 
