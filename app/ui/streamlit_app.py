@@ -20,7 +20,7 @@ LOGO_PATH = SCRIPT_DIR / "graphML_logo.png"
 col1, col2 = st.columns([9.4, 0.6])
 
 with col1:
-    st.title("eGFR Prediction Dashboard...")
+    st.title("eGFR Prediction Dashboard")
 
 with col2:
     # Check if the file exists to avoid crashes, then display it
