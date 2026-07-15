@@ -1,0 +1,242 @@
+groups:
+
+- name: production_alerts
+
+
+  rules:
+
+
+  # --------------------
+  # FastAPI availability
+  # --------------------
+
+  - alert: FastAPIDown
+
+    expr:
+
+      up{job="fastapi"} == 0
+
+
+    for: 1m
+
+
+    labels:
+
+      severity: critical
+
+
+    annotations:
+
+      summary: FastAPI is down
+
+      description: FastAPI service is not responding.
+
+
+
+  # --------------------
+  # High API latency
+  # --------------------
+
+
+  - alert: HighPredictionLatency
+
+
+    expr:
+
+      fastapi:prediction_latency_p95 > 0.5
+
+
+    for: 5m
+
+
+    labels:
+
+      severity: warning
+
+
+    annotations:
+
+      summary: High prediction latency
+
+      description: P95 prediction latency is above 500ms.
+
+
+
+  # --------------------
+  # High Error Rate
+  # --------------------
+
+
+  - alert: HighErrorRate
+
+
+    expr:
+
+
+      sum(
+        rate(
+          http_requests_total{
+            status=~"5xx"
+          }[5m]
+        )
+      )
+
+      /
+
+      sum(
+        rate(
+          http_requests_total[5m]
+        )
+      )
+
+      > 0.05
+
+
+
+    for: 5m
+
+
+    labels:
+
+      severity: warning
+
+
+    annotations:
+
+      summary: High API error rate
+
+
+
+
+
+  # --------------------
+  # High CPU
+  # --------------------
+
+
+  - alert: HighCPUUsage
+
+
+    expr:
+
+
+      100 -
+
+      (
+        avg by(instance)
+        (
+          rate(
+            node_cpu_seconds_total{
+              mode="idle"
+            }[5m]
+          )
+        )
+        *100
+      )
+
+      > 90
+
+
+
+    for: 5m
+
+
+    labels:
+
+      severity: warning
+
+
+
+
+  # --------------------
+  # High Memory
+  # --------------------
+
+
+  - alert: HighMemoryUsage
+
+
+    expr:
+
+
+      (
+        1 -
+
+        (
+          node_memory_MemAvailable_bytes
+
+          /
+
+          node_memory_MemTotal_bytes
+        )
+
+      )
+
+      *100 > 90
+
+
+
+    for: 5m
+
+
+
+    labels:
+
+      severity: warning
+
+
+
+  # --------------------
+  # Disk
+  # --------------------
+
+
+  - alert: LowDiskSpace
+
+
+    expr:
+
+
+      (
+        node_filesystem_avail_bytes
+
+        /
+
+        node_filesystem_size_bytes
+
+      )
+
+      *100 < 10
+
+
+
+    for: 10m
+
+
+
+    labels:
+
+      severity: warning
+      
+      
+      
+  - alert: PredictionFailuresDetected
+
+    expr:
+
+      rate(prediction_failures_total[5m]) > 0
+
+
+    for: 2m
+
+
+    labels:
+
+      severity: critical
+
+
+    annotations:
+
+      summary: Prediction failures detected
+
+      description: ML inference endpoint is failing.      

@@ -1,0 +1,127 @@
+groups:
+
+- name: fastapi_recording_rules
+
+  interval: 30s
+
+
+  rules:
+
+
+  # Requests per second
+
+  - record: fastapi:requests_per_second
+
+    expr:
+
+      sum(
+        rate(
+          http_requests_total[1m]
+        )
+      )
+
+
+
+  # Prediction requests per second
+
+  - record: fastapi:prediction_requests_per_second
+
+    expr:
+
+      sum(
+        rate(
+          http_requests_total{
+            handler="/predict"
+          }[1m]
+        )
+      )
+
+
+
+  # Prediction P95 latency
+
+  - record: fastapi:prediction_latency_p95
+
+    expr:
+
+      histogram_quantile(
+        0.95,
+        sum(
+          rate(
+            http_request_duration_seconds_bucket{
+              handler="/predict"
+            }[5m]
+          )
+        )
+        by (le)
+      )
+
+
+
+  # Prediction P99 latency
+
+  - record: fastapi:prediction_latency_p99
+
+    expr:
+
+      histogram_quantile(
+        0.99,
+        sum(
+          rate(
+            http_request_duration_seconds_bucket{
+              handler="/predict"
+            }[5m]
+          )
+        )
+        by (le)
+      )
+
+
+
+  # ML inference P95
+
+  - record: model:prediction_latency_p95
+
+    expr:
+
+      histogram_quantile(
+        0.95,
+        sum(
+          rate(
+            prediction_duration_seconds_bucket[5m]
+          )
+        )
+        by (le)
+      )
+      
+      
+      
+      
+  - record: model:prediction_rate
+
+    expr:
+
+      rate(
+        prediction_total[5m]
+      )
+
+
+
+  - record: model:prediction_failure_rate
+
+    expr:
+
+      rate(
+        prediction_failures_total[5m]
+      )
+
+
+
+  - record: model:stage_distribution
+
+    expr:
+
+      sum by(day,stage)
+      (
+        prediction_stage_total
+      )      
