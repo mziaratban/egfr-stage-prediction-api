@@ -95,6 +95,22 @@ jobs:
 
 
 
+      - name: Arrange deployment files
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+          script: |
+            cd /opt/myapp
+
+            if [ -d "deploy" ]; then
+              mv deploy/deploy.sh .
+              mv deploy/docker-compose.production.yml .
+              rm -rf deploy
+            fi
+
       # ------------------------------
       # Run deployment
       # ------------------------------
