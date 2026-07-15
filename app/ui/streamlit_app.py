@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 from pathlib import Path
 
 # -------------------------
-# Page config
+# Page config   
 # -------------------------
 st.set_page_config(page_title="eGFR Predictor", layout="wide")
 
