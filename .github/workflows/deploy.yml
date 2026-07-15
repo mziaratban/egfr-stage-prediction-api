@@ -17,10 +17,6 @@ jobs:
 
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
-    permissions:
-      contents: read
-      packages: write
-
 
     steps:
 
@@ -28,44 +24,8 @@ jobs:
         uses: actions/checkout@v4
 
 
-      - name: Login to GHCR
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-
-      - name: Build FastAPI image
-        run: |
-          docker build \
-          -f Dockerfile.fastapi \
-          -t ghcr.io/mziaratban/egfr-stage-prediction-api-fastapi:latest .
-
-
-      - name: Push FastAPI image
-        run: |
-          docker push \
-          ghcr.io/mziaratban/egfr-stage-prediction-api-fastapi:latest
-
-
-
-      - name: Build Streamlit image
-        run: |
-          docker build \
-          -f Dockerfile.streamlit \
-          -t ghcr.io/mziaratban/egfr-stage-prediction-api-streamlit:latest .
-
-
-      - name: Push Streamlit image
-        run: |
-          docker push \
-          ghcr.io/mziaratban/egfr-stage-prediction-api-streamlit:latest
-
-
-
       # ------------------------------
-      # Copy deployment configuration
+      # Prepare deployment directory
       # ------------------------------
 
       - name: Prepare deployment directory
@@ -74,30 +34,45 @@ jobs:
           host: ${{ secrets.SERVER_IP }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+
           script: |
             mkdir -p /opt/myapp
 
 
+      # ------------------------------
+      # Copy deployment files
+      # ------------------------------
+
       - name: Copy deployment files
         uses: appleboy/scp-action@v0.1.7
+
         with:
+
           host: ${{ secrets.SERVER_IP }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-          source: "deploy/deploy.sh,deploy/docker-compose.production.yml,prometheus,grafana"
+          source: "deploy/deploy.sh,deploy/docker-compose.production.yml"
 
           target: "/opt/myapp"
 
 
+
+      # ------------------------------
+      # Arrange files
+      # ------------------------------
+
       - name: Arrange deployment files
         uses: appleboy/ssh-action@v1.0.3
+
         with:
+
           host: ${{ secrets.SERVER_IP }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
 
           script: |
+
             cd /opt/myapp
 
             if [ -d "deploy" ]; then
@@ -106,19 +81,23 @@ jobs:
               rm -rf deploy
             fi
 
+
+
       # ------------------------------
-      # Run deployment
+      # Deploy containers
       # ------------------------------
 
       - name: Deploy to Ubuntu
         uses: appleboy/ssh-action@v1.0.3
 
         with:
+
           host: ${{ secrets.SERVER_IP }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
 
           script: |
+
             cd /opt/myapp
 
             chmod +x deploy.sh
