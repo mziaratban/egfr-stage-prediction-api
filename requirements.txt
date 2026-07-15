@@ -9,3 +9,5 @@ numpy
 pandas
 pydantic
 matplotlib
+prometheus-client==0.22.1
+prometheus-fastapi-instrumentator==7.1.0
