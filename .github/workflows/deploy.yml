@@ -52,7 +52,7 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-          source: "deploy/deploy.sh,deploy/docker-compose.production.yml"
+          source: "deploy/deploy.sh,deploy/docker-compose.production.yml,prometheus,grafana"
 
           target: "/opt/myapp"
 
